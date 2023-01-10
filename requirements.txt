@@ -1,0 +1,15 @@
+streamlit
+streamlit_folium
+folium
+geopy.geocoders
+pandas
+numpy
+datetime
+numpy
+sklearn.metrics
+seaborn
+warnings
+sklearn.model_selection
+sklearn.ensemble
+geopy.distance
+os
