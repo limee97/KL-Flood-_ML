@@ -8,6 +8,5 @@ datetime
 numpy
 sklearn
 seaborn
-warnings
 sklearn
 os
