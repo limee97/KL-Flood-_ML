@@ -1,0 +1,13 @@
+streamlit
+streamlit_folium
+folium
+geopy
+pandas
+numpy
+datetime
+numpy
+sklearn
+seaborn
+warnings
+sklearn
+os
