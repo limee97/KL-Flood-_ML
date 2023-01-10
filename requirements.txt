@@ -7,3 +7,6 @@ datetime
 numpy
 sklearn
 seaborn
+sklearn.metrics
+sklearn.model_selection
+sklearn.ensemble
