@@ -6,12 +6,12 @@ import seaborn as sns
 import warnings
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-warnings.filterwarnings("ignore")
+#warnings.filterwarnings("ignore")
 from geopy.distance import great_circle
 
 #set working directory:
-import os
-os.chdir("C:/Users/Lim Ee/OneDrive/Desktop/WQD7003/Project/Final")
+#import os
+#os.chdir("C:/Users/Lim Ee/OneDrive/Desktop/WQD7003/Project/Final")
 
 df1 =pd.read_csv('3114005.csv')
 df2 =pd.read_csv('3114113.csv')
