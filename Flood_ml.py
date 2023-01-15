@@ -51,12 +51,12 @@ Flood['Daily'] =  pd.to_datetime(Flood['Daily'])
 
 
 #added to remove outliers
-Flood=Flood[["Daily","StationID","Rainfall","Flood_Event"]]
-Flood.Flood_Event=Flood.Flood_Event.astype(int)#converts to integer
+Flood=Flood[["Daily","StationID","Rainfall","Flood Event"]]
+Flood["Flood Event"]=Flood["Flood_Event"].astype(int)#converts to integer
 
 #split the data to flood occured (flood1) and no Flood (flood0)
-flood0=Flood[Flood.Flood_Event==0]
-flood1=Flood[Flood.Flood_Event==1]
+flood0=Flood[Flood["Flood Event"]==0]
+flood1=Flood[Flood["Flood Event"]==1]
 
 #further filter flood0 to only contain days where it rained
 flood0_rain=flood0[flood0.Rainfall>0]
