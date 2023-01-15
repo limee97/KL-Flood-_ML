@@ -128,11 +128,12 @@ if a==1:
     
 #coordinate in loc [long,lat]
 input_rainfall = st.text_input("Key in the expected rainfall in mm:")
+st.markdown("<a href='https://publicinfobanjir.water.gov.my/hujan/data-hujan/?state=WLH&lang=en'>Refer to this link for rainfall data</a>", unsafe_allow_html=True)
 
 if input_rainfall:
     try:
-        result=int(input_rainfall)
-        input_rainfall=int(input_rainfall)
+        result= float(input_rainfall)
+        input_rainfall=float(input_rainfall)
     except TypeError:
         st.write(f":red[Please key in a valid number]")
         
@@ -169,10 +170,8 @@ if file:
 
 if st.button(label="Predict!",key=2):
     #code for ML would go here
-    #use dummy output for now. Classficaiton (C)=1 
-    #dummy station,s=3131
-    
-    df_user['Mapped Location'] = df_user['Location'].apply(lambda x: geolocator.geocode(x, exactly_one=True))
+    csv_rainfall=df_user.iloc[:,1]
+    df_user['Mapped Location'] = df_user.iloc[:,0].apply(lambda x: geolocator.geocode(x, exactly_one=True))
     lat=df_user['Mapped Location'].apply(lambda x:x.latitude)
     long=df_user['Mapped Location'].apply(lambda x:x.longitude)
     df_user['Mapped Coordinates']=list(zip(lat, long))
@@ -181,9 +180,8 @@ if st.button(label="Predict!",key=2):
     df_user['Nearest Rainfall Station ID']=df_user['Mapped Coordinates'].apply(lambda x:Flood_ml.dist(x))
     
     #prediction
-    x=df_user[["Nearest Rainfall Station ID","Rainfall (mm)"]]
-    X_test=x.values
-    df_user["Prediction"]=Flood_ml.ml_df(X_test)
+    csv_station=df_user["Nearest Rainfall Station ID"]
+    df_user["Prediction"]=Flood_ml.ml_df(csv_station,csv_rainfall)
     #convert to flood or no flood
     
     def dec(x):
