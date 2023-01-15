@@ -52,7 +52,7 @@ Flood['Daily'] =  pd.to_datetime(Flood['Daily'])
 
 #added to remove outliers
 Flood=Flood[["Daily","StationID","Rainfall","Flood Event"]]
-Flood["Flood Event"]=Flood["Flood_Event"].astype(int)#converts to integer
+Flood["Flood Event"]=Flood["Flood Event"].astype(int)#converts to integer
 
 #split the data to flood occured (flood1) and no Flood (flood0)
 flood0=Flood[Flood["Flood Event"]==0]
@@ -81,10 +81,12 @@ ml_data=pd.concat([flood0_rain,flood1,flood0[flood0.Rainfall==0]])
 
 
 df = ml_data[['StationID', 'Rainfall','Flood Event']]
+max_rain=df.Rainfall.max()
+min_rain=df.Rainfall.min()
 
 
 #Preprocessing / Normalization
-df['Rainfall']= (df['Rainfall']-min(df['Rainfall']))/(max(df['Rainfall']-min(df['Rainfall'])))
+df.Rainfall= (df.Rainfall-df.Rainfall.min())/(df.Rainfall.max()-df.Rainfall.min())
 
 
 
@@ -94,7 +96,7 @@ X = df[['StationID', 'Rainfall']]
 y = df['Flood Event']
 
 #split data to test and train (80/20)
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=999)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
 # Model Train
 clf = RandomForestClassifier()
@@ -125,7 +127,8 @@ def dist(coord):
 
 #to run ml
 def ml(stationID,rainfall):
-    x=[stationID,rainfall]
+    Rainfall= (rainfall-min_rain)/(max_rain-min_rain)
+    x=[stationID,Rainfall]
     X_test=np.array(x).reshape(1,-1)
     pred = clf.predict(X_test)
     
@@ -137,8 +140,11 @@ def ml(stationID,rainfall):
 
 
 #to run ml for df (assume preshaped)
-def ml_df(x):
-    pred = clf.predict(x)
+def ml_df(csv_station,csv_rainfall):
+    csv_rainfall=(csv_rainfall-min_rain)/(max_rain-min_rain)
+    x=pd.DataFrame({"station":csv_station,"rain":csv_rainfall})
+    X_test=x.values
+    pred = clf.predict(X_test)
     pred=pd.Series(pred)
     return pred
 
