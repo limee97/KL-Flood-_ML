@@ -3,10 +3,8 @@ import datetime
 import numpy as np
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 import seaborn as sns
-import warnings
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
-#warnings.filterwarnings("ignore")
 from geopy.distance import great_circle
 
 #set working directory:
@@ -50,7 +48,39 @@ del Flood["Unnamed: 3" ]
 
 ## change Daily to datetime so we are able to slice the date, convert name to df
 Flood['Daily'] =  pd.to_datetime(Flood['Daily'])
-df = Flood[['StationID', 'Rainfall','Flood Event']]
+
+
+#added to remove outliers
+Flood=Flood[["Daily","StationID","Rainfall","Flood_Event"]]
+Flood.Flood_Event=Flood.Flood_Event.astype(int)#converts to integer
+
+#split the data to flood occured (flood1) and no Flood (flood0)
+flood0=Flood[Flood.Flood_Event==0]
+flood1=Flood[Flood.Flood_Event==1]
+
+#further filter flood0 to only contain days where it rained
+flood0_rain=flood0[flood0.Rainfall>0]
+
+#Remove outliers shown in box plots (anything beyond upper bound of when it rained -flood0_rain) Upper bound=Q3*1.5
+q75,q25=np.percentile(flood0_rain.Rainfall,[75,25])
+iqr=q75-q25
+
+upper_bound=q75+(1.5*iqr)
+
+#convert all flood0_rain data wih rainfall>upper bound to null
+flood0_rain.loc[flood0_rain.Rainfall>upper_bound,"Rainfall"]=np.nan
+#check how many datapoints will be removed
+flood0_rain.isnull().sum()  #747 data points will be removed
+
+#remove the null (outliers)
+flood0_rain=flood0_rain.dropna(axis=0)
+
+ml_data=pd.concat([flood0_rain,flood1,flood0[flood0.Rainfall==0]])
+
+
+
+
+df = ml_data[['StationID', 'Rainfall','Flood Event']]
 
 
 #Preprocessing / Normalization
